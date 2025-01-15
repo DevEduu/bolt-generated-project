@@ -10,15 +10,15 @@ ENV HOST=0.0.0.0
 # Configura diretório de trabalho
 WORKDIR /app
 
+# Copia arquivos de configuração
+COPY package.json package-lock.json ./
+
 # Instala dependências de build
 RUN apk add --no-cache \
     git \
     python3 \
     make \
     g++
-
-# Copia arquivos de configuração
-COPY package.json package-lock.json ./
 
 # Instala dependências
 RUN npm ci --only=production
