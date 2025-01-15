@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+    <html lang="pt-BR">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>DevEduuIA</title>
+      <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+      <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+      <script src="https://cdn.tailwindcss.com/3.4.5?plugins=forms@0.5.7,typography@0.5.13,aspect-ratio@0.4.2,container-queries@0.1.1"></script>
+      <script src="https://ai-public.creatie.ai/gen_page/tailwind-config.min.js" data-color="#AC1BF5" data-border-radius='medium'></script>
+    </head>
+    <body class="bg-gray-900 text-white min-h-screen flex flex-col">
+      <header class="border-b border-gray-800">
+        <nav class="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="flex justify-between h-16 items-center">
+            <div class="flex items-center">
+              <img 
+                class="h-12 w-12 rounded-full object-cover" 
+                src="https://media.licdn.com/dms/image/v2/D4D03AQHme2YzEkrL6Q/profile-displayphoto-shrink_400_400/profile-displayphoto-shrink_400_400/0/1724859549715?e=1742428800&v=beta&t=hAUhLnpghKf4kQE1C0PgM8hqHDKlgR50L7KjrnnH8rI" 
+                alt="Logo DevEduuIA"
+              >
+            </div>
+            <div class="flex items-center space-x-4">
+              <button id="loginBtn" class="!rounded-button bg-custom hover:bg-custom/90 px-4 py-2 text-white font-medium">
+                <i class="fas fa-user mr-2"></i>Entrar
+              </button>
+              <button id="logoutBtn" class="hidden !rounded-button bg-red-500 hover:bg-red-600 px-4 py-2 text-white font-medium">
+                <i class="fas fa-sign-out-alt mr-2"></i>Sair
+              </button>
+            </div>
+          </div>
+        </nav>
+      </header>
+
+      <main class="flex-grow container mx-auto px-4 py-8">
+        <div id="linksContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <!-- Links serão renderizados aqui pelo JavaScript -->
+        </div>
+      </main>
+
+      <button id="addBtn" class="hidden fixed bottom-8 right-8 !rounded-button bg-custom hover:bg-custom/90 p-4 shadow-lg">
+        <i class="fas fa-plus text-xl"></i>
+      </button>
+
+      <!-- Modal de Login -->
+      <div id="loginModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+        <div class="bg-gray-800 p-8 rounded-lg max-w-md w-full">
+          <h2 class="text-2xl font-bold mb-6">Entrar</h2>
+          <form id="loginForm">
+            <div>
+              <label class="block text-sm font-medium mb-2">Email</label>
+              <input type="email" class="w-full bg-gray-700 border-gray-600 rounded-lg p-2" required>
+            </div>
+            <div>
+              <label class="block text-sm font-medium mb-2">Senha</label>
+              <input type="password" class="w-full bg-gray-700 border-gray-600 rounded-lg p-2" required>
+            </div>
+            <button type="submit" class="w-full !rounded-button bg-custom hover:bg-custom/90 py-2 font-medium mt-4">Entrar</button>
+            <button type="button" class="w-full !rounded-button bg-gray-700 hover:bg-gray-600 py-2 font-medium mt-2">Cancelar</button>
+            <a href="#" class="block text-center text-sm text-custom hover:underline mt-2">Esqueci minha senha</a>
+          </form>
+        </div>
+      </div>
+
+      <!-- Modal de Adicionar Link -->
+      <div id="addModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+        <div class="bg-gray-800 p-8 rounded-lg max-w-md w-full">
+          <h2 class="text-2xl font-bold mb-6">Adicionar Link</h2>
+          <form id="addForm">
+            <div>
+              <label class="block text-sm font-medium mb-2">Título</label>
+              <input type="text" class="w-full bg-gray-700 border-gray-600 rounded-lg p-2" required>
+            </div>
+            <div>
+              <label class="block text-sm font-medium mb-2">URL</label>
+              <input type="url" class="w-full bg-gray-700 border-gray-600 rounded-lg p-2" required>
+            </div>
+            <div>
+              <label class="block text-sm font-medium mb-2">Descrição</label>
+              <textarea class="w-full bg-gray-700 border-gray-600 rounded-lg p-2" rows="3" required></textarea>
+            </div>
+            <div>
+              <label class="block text-sm font-medium mb-2">Categorias</label>
+              <input type="text" class="w-full bg-gray-700 border-gray-600 rounded-lg p-2" placeholder="Separe por vírgulas">
+            </div>
+            <div class="flex space-x-4 mt-4">
+              <button type="submit" class="flex-1 !rounded-button bg-custom hover:bg-custom/90 py-2 font-medium">Salvar</button>
+              <button type="button" class="flex-1 !rounded-button bg-gray-700 hover:bg-gray-600 py-2 font-medium">Cancelar</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Modal de Exclusão -->
+      <div id="deleteModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+        <div class="bg-gray-800 p-8 rounded-lg max-w-md w-full">
+          <h2 class="text-2xl font-bold mb-6">Excluir Link</h2>
+          <p class="text-gray-300 mb-6">Tem certeza que deseja excluir este link? Esta ação não pode ser desfeita.</p>
+          <div class="flex space-x-4">
+            <button id="confirmDeleteBtn" class="flex-1 !rounded-button bg-red-500 hover:bg-red-600 py-2 font-medium">Excluir</button>
+            <button id="cancelDeleteBtn" class="flex-1 !rounded-button bg-gray-700 hover:bg-gray-600 py-2 font-medium">Cancelar</button>
+          </div>
+        </div>
+      </div>
+
+      <script type="module" src="/src/main.js"></script>
+    </body>
+    </html>
