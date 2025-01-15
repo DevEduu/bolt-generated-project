@@ -1,0 +1,41 @@
+# Controle de versão
+.git
+.gitignore
+.gitattributes
+
+# Dependências
+node_modules
+npm-debug.log
+yarn-debug.log
+yarn-error.log
+
+# Ambiente
+.env
+.env.*
+*.env
+
+# IDE e editores
+.idea
+.vscode
+*.swp
+*.swo
+
+# Testes
+coverage
+.nyc_output
+test
+tests
+__tests__
+
+# Build e logs
+dist
+build
+logs
+*.log
+
+# Outros
+.DS_Store
+*.md
+docker-compose*
+Dockerfile*
+.dockerignore 

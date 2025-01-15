@@ -1,59 +1,73 @@
-# Estágio de build
+# ---- Estágio de Build ----
 FROM node:18.17.1-alpine3.18 AS builder
 
-# Configurações de ambiente
-ARG NODE_ENV=production
-ENV NODE_ENV=${NODE_ENV}
-ENV PORT=5173
-ENV HOST=0.0.0.0
+# Configuração de argumentos e variáveis de ambiente
+ARG PORT=5173
+ENV PORT=${PORT} \
+    HOST=0.0.0.0 \
+    NODE_ENV=development
 
-# Configura diretório de trabalho
 WORKDIR /app
 
-# Copia arquivos de configuração
-COPY package.json package-lock.json ./
-
-# Instala dependências de build
+# Instalação de dependências do sistema
 RUN apk add --no-cache \
     git \
     python3 \
     make \
-    g++
+    g++ \
+    && rm -rf /var/cache/apk/*
 
-# Instala dependências
-RUN npm ci --only=production
+# Copia arquivos de configuração
+COPY package*.json .
+COPY vite.config.js .
+COPY index.html .
 
-# Copia o restante do código
-COPY . .
+# Instala todas as dependências
+RUN npm install
+
+# Copia o código fonte
+COPY src/ ./src/
 
 # Build da aplicação
 RUN npm run build
 
-# Estágio final
+# ---- Imagem Final ----
 FROM node:18.17.1-alpine3.18
 
-# Configurações de segurança
-RUN apk add --no-cache tini
-ENTRYPOINT ["/sbin/tini", "--"]
+ARG PORT=5173
+ENV PORT=${PORT} \
+    HOST=0.0.0.0 \
+    NODE_ENV=production
 
-# Configura usuário não-root
-RUN addgroup -S appgroup && adduser -S appuser -G appgroup
-USER appuser
+# Instalação do Tini
+RUN apk add --no-cache tini \
+    && rm -rf /var/cache/apk/*
 
-# Configura diretório de trabalho
 WORKDIR /app
 
-# Copia arquivos do estágio de build
-COPY --from=builder --chown=appuser:appgroup /app/node_modules ./node_modules
+# Configuração de usuário não-root com permissões adequadas
+RUN addgroup -S appgroup && adduser -S appuser -G appgroup && \
+    mkdir -p /app/node_modules/.vite && \
+    chown -R appuser:appgroup /app
+
+# Copia os arquivos com as permissões corretas
 COPY --from=builder --chown=appuser:appgroup /app/dist ./dist
-COPY --from=builder --chown=appuser:appgroup /app/public ./public
+COPY --from=builder --chown=appuser:appgroup /app/node_modules ./node_modules
+COPY --from=builder --chown=appuser:appgroup /app/package.json .
+COPY --from=builder --chown=appuser:appgroup /app/vite.config.js .
 
-# Configura health check
-HEALTHCHECK --interval=30s --timeout=3s \
-  CMD curl -f http://localhost:5173 || exit 1
+# Garante permissões de escrita nos diretórios necessários
+RUN chmod 755 /app && \
+    chmod -R 755 /app/node_modules && \
+    chmod 755 /app/vite.config.js && \
+    mkdir -p /app/node_modules/.vite && \
+    chmod -R 777 /app/node_modules/.vite
 
-# Expõe a porta
-EXPOSE 5173
+USER appuser
 
-# Comando de execução
-CMD ["node", "dist/main.js"]
+EXPOSE ${PORT}
+
+ENTRYPOINT ["/sbin/tini", "--"]
+
+# Alterado para usar node diretamente com o servidor de preview
+CMD ["npm", "run", "preview"]
